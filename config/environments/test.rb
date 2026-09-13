@@ -53,4 +53,9 @@ Rails.application.configure do
 
   # Run jobs synchronously/inline and make ActiveJob test helpers (assert_enqueued_with, etc.) available.
   config.active_job.queue_adapter = :test
+
+  # Active Record Encryption keys for hermetic test execution without credentials
+  config.active_record.encryption.primary_key = "test-primary-key-32-bytes-long!!"
+  config.active_record.encryption.deterministic_key = "test-deterministic-key-32-byte!"
+  config.active_record.encryption.key_derivation_salt = "test-key-derivation-salt-32-byte"
 end
