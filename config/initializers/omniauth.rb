@@ -9,4 +9,4 @@ Rails.application.config.middleware.use OmniAuth::Builder do
     scope: "user-read-email user-read-private playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private"
 end
 
-OmniAuth.config.allowed_request_methods = [:post]
+OmniAuth.config.allowed_request_methods = [ :post ]

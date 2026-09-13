@@ -1,6 +1,22 @@
 #!/usr/bin/env ruby
 require_relative "../config/boot"
-require "active_support/continuous_integration"
 
-CI = ActiveSupport::ContinuousIntegration
+begin
+  require "active_support/continuous_integration"
+  CI = ActiveSupport::ContinuousIntegration
+rescue LoadError
+  # Fallback runner when active_support/continuous_integration is not bundled
+  module CI
+    def self.run(&block)
+      instance_eval(&block)
+    end
+
+    def self.step(name, command)
+      puts "\n== #{name} =="
+      system(command) || abort("\n❌ #{name} failed!")
+    end
+  end
+end
+
 require_relative "../config/ci.rb"
+

@@ -31,3 +31,9 @@ Run this ladder after understanding the problem: read the code it touches and tr
 - Choose the edge-case-correct option when two standard-library approaches are the same size.
 - Keep validation, error handling, security, accessibility, and tests. For non-trivial logic, leave one runnable check that would fail if the logic breaks.
 - Mark intentional simplifications with a `ponytail:` comment that names the known ceiling and upgrade path.
+
+## Git & Repository Workflow
+
+- **Branch Protection**: Branch protection rules are enabled on `main`. Direct pushes to `main` are restricted; all changes must be submitted via feature/fix branches and pull requests.
+- **Commit Messages**: Follow [Conventional Commits](https://www.conventionalcommits.org/) (e.g., `feat:`, `fix:`, `ci:`, `chore:`, `refactor:`, `docs:`, `test:`).
+

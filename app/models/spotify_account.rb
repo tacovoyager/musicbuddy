@@ -24,14 +24,14 @@ class SpotifyAccount < ApplicationRecord
   end
 
   def create_playlist(name)
-    response = connection.post("me/playlists", { name: name }.to_json)
+    response = http_client.post("me/playlists", { name: name }.to_json)
     raise_api_error(response) unless response.success?
 
     JSON.parse(response.body)
   end
 
   def delete_playlist(playlist_id)
-    response = connection.delete("playlists/#{playlist_id}/followers")
+    response = http_client.delete("playlists/#{playlist_id}/followers")
     raise_api_error(response) unless response.success?
 
     true
@@ -43,7 +43,7 @@ class SpotifyAccount < ApplicationRecord
     offset = 0
 
     loop do
-      response = connection.get("me/playlists", limit: PLAYLISTS_PAGE_SIZE, offset: offset)
+      response = http_client.get("me/playlists", limit: PLAYLISTS_PAGE_SIZE, offset: offset)
       raise_api_error(response) unless response.success?
 
       page = JSON.parse(response.body)["items"]
@@ -65,7 +65,7 @@ class SpotifyAccount < ApplicationRecord
     raise ApiError.new("Spotify API error (#{response.status})", status: response.status)
   end
 
-  def connection
+  def http_client
     Faraday.new(url: API_BASE) do |f|
       f.headers["Authorization"] = "Bearer #{access_token}"
       f.headers["Content-Type"] = "application/json"
