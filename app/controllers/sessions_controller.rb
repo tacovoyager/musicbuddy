@@ -11,6 +11,10 @@ class SessionsController < ApplicationController
   end
 
   def failure
-    redirect_to root_path, alert: "Google sign-in failed. Please try again."
+    if params[:strategy] == "spotify"
+      redirect_to profile_path, alert: "Spotify connection failed. Please try again."
+    else
+      redirect_to root_path, alert: "Google sign-in failed. Please try again."
+    end
   end
 end

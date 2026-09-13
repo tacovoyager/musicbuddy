@@ -1,0 +1,15 @@
+<%= turbo_frame_tag "musicbuddy_playlists" do %>
+  <% if playlists.blank? %>
+    <p class="text-base-content/70">No Musicbuddy playlists found yet — create one above!</p>
+  <% else %>
+    <div class="space-y-2">
+      <% playlists.each do |playlist| %>
+        <div class="flex items-center justify-between gap-3 bg-base-200 rounded-box px-4 py-2">
+          <a href="<%= playlist.dig("external_urls", "spotify") %>" target="_blank" rel="noopener" class="link link-hover font-medium">
+            <%= playlist["name"] %>
+          </a>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

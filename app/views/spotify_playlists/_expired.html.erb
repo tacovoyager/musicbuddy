@@ -1,0 +1,8 @@
+<%= turbo_frame_tag "musicbuddy_playlists" do %>
+  <div class="alert alert-warning text-sm flex-col items-start sm:flex-row sm:items-center">
+    <span>Your Spotify connection has expired. Reconnect to see your Musicbuddy playlists.</span>
+    <%= button_to "/auth/spotify", data: { turbo: false }, class: "btn btn-sm btn-warning" do %>
+      Reconnect Spotify
+    <% end %>
+  </div>
+<% end %>

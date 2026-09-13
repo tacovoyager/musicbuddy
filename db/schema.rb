@@ -10,7 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_13_033824) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_13_133955) do
+  create_table "spotify_accounts", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "uid", null: false
+    t.string "access_token", null: false
+    t.string "refresh_token"
+    t.datetime "expires_at"
+    t.string "scope"
+    t.string "token_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["uid"], name: "index_spotify_accounts_on_uid", unique: true
+    t.index ["user_id"], name: "index_spotify_accounts_on_user_id", unique: true
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "provider", null: false
     t.string "uid", null: false
@@ -21,4 +35,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_13_033824) do
     t.datetime "updated_at", null: false
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
   end
+
+  add_foreign_key "spotify_accounts", "users"
 end

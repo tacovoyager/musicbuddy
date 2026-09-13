@@ -1,0 +1,6 @@
+<div id="spotify_playlist_<%= playlist["id"] %>" class="flex items-center justify-between gap-3 bg-base-200 rounded-box px-4 py-2">
+  <a href="<%= playlist.dig("external_urls", "spotify") %>" target="_blank" rel="noopener" class="link link-hover font-medium">
+    <%= playlist["name"] %>
+  </a>
+  <%= button_to "Delete", spotify_playlist_path(playlist["id"]), method: :delete, class: "btn btn-outline btn-error btn-xs" %>
+</div>
