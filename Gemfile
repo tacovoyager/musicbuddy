@@ -31,6 +31,9 @@ gem "omniauth-rails_csrf_protection"
 # Spotify OAuth account connection
 gem "omniauth-spotify"
 
+# Anthropic Claude API for AI Playlist Generation
+gem "anthropic"
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 

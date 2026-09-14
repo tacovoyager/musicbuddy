@@ -1,0 +1,15 @@
+<% if message.role == "user" %>
+  <div class="chat chat-end mb-4">
+    <div class="chat-header text-xs opacity-50 mb-1">You</div>
+    <div class="chat-bubble chat-bubble-primary">
+      <%= render "ai_chats/message_content", message: message, content: message.content %>
+    </div>
+  </div>
+<% else %>
+  <div class="chat chat-start mb-4">
+    <div class="chat-header text-xs opacity-50 mb-1">Musicbuddy AI</div>
+    <div class="chat-bubble chat-bubble-secondary">
+      <%= render "ai_chats/message_content", message: message, content: message.content %>
+    </div>
+  </div>
+<% end %>

@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   has_one :spotify_account, dependent: :destroy
+  has_many :chat_messages, dependent: :destroy
 
   validates :provider, :uid, presence: true
   validates :uid, uniqueness: { scope: :provider }
