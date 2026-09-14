@@ -30,6 +30,23 @@ class SpotifyAccount < ApplicationRecord
     JSON.parse(response.body)
   end
 
+  def add_tracks_to_playlist(playlist_id, uris)
+    return true if uris.empty?
+
+    response = http_client.post("playlists/#{playlist_id}/items", { uris: uris }.to_json)
+    raise_api_error(response) unless response.success?
+
+    JSON.parse(response.body)
+  end
+
+  def search_track(query)
+    response = http_client.get("search", q: query, type: "track", limit: 1)
+    raise_api_error(response) unless response.success?
+
+    items = JSON.parse(response.body).dig("tracks", "items")
+    items&.first
+  end
+
   def delete_playlist(playlist_id)
     response = http_client.delete("playlists/#{playlist_id}/followers")
     raise_api_error(response) unless response.success?

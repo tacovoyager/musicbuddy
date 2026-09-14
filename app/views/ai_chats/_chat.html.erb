@@ -1,0 +1,62 @@
+<div id="ai_chat_container" class="card bg-base-100 shadow-xl h-full flex flex-col min-h-[600px]">
+  <%= turbo_stream_from "ai_chat_#{user.id}" %>
+
+  <div class="card-body p-6 flex flex-col justify-between h-full">
+    <!-- Header -->
+    <div class="flex items-center justify-between pb-3 border-b border-base-200">
+      <div>
+        <h3 class="card-title text-xl font-bold flex items-center gap-2">
+          <span>🎵 Musicbuddy AI Assistant</span>
+        </h3>
+        <p class="text-xs text-base-content/60">Ask for recommendations or playlist vibes to automatically create Spotify playlists.</p>
+      </div>
+      <% if user.chat_messages.any? %>
+        <%= button_to ai_chat_path(1), method: :delete, class: "btn btn-ghost btn-xs text-error", data: { turbo_confirm: "Clear conversation history?" } do %>
+          Clear Chat
+        <% end %>
+      <% end %>
+    </div>
+
+    <!-- Chat Messages Scroll Container -->
+    <div class="flex-1 overflow-y-auto my-4 pr-2 space-y-2 min-h-[400px] max-h-[500px]" id="chat_messages_scroll">
+      <div id="chat_messages_list">
+        <% if user.chat_messages.none? %>
+          <div class="text-center py-12 text-base-content/50 space-y-3">
+            <div class="text-4xl">🎧</div>
+            <p class="font-medium text-sm">Tell me what kind of music or vibe you're looking for!</p>
+            <div class="flex flex-wrap justify-center gap-2 text-xs">
+              <span class="badge badge-outline">"10 upbeat jazz tracks for morning coffee"</span>
+              <span class="badge badge-outline">"Late night synthwave for coding"</span>
+              <span class="badge badge-outline">"90s indie rock roadtrip mix"</span>
+            </div>
+          </div>
+        <% else %>
+          <% user.chat_messages.for_session(session[:ai_chat_session_id]).chronological.each do |message| %>
+            <%= render "ai_chats/message", message: message %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Chat Form Input -->
+    <div class="pt-3 border-t border-base-200">
+      <% if user.spotify_account.nil? %>
+        <div class="alert alert-info text-xs py-2 mb-2">
+          Connect your Spotify account in the sidebar to automatically save generated playlists to Spotify!
+        </div>
+      <% elsif user.spotify_account.expired? %>
+        <div class="alert alert-warning text-xs py-2 mb-2">
+          Your Spotify token has expired. Reconnect Spotify to create playlists automatically.
+        </div>
+      <% end %>
+
+      <%= form_with url: ai_chats_path, method: :post, class: "flex gap-2", data: { controller: "reset-form", action: "turbo:submit-end->reset-form#reset" } do |f| %>
+        <%= f.text_field :prompt, placeholder: "e.g. Create a 10-song playlist of upbeat 80s pop classics...", class: "input input-bordered flex-1 input-sm sm:input-md", autocomplete: "off", required: true %>
+        <%= f.button type: "submit", class: "btn btn-primary btn-sm sm:btn-md gap-2" do %>
+          <span>Send</span>
+          <span>✨</span>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,18 @@
+<div class="my-3 card bg-base-200 border border-success/30 shadow-md">
+  <div class="card-body p-4 flex flex-row items-center justify-between">
+    <div>
+      <div class="flex items-center gap-2">
+        <span class="badge badge-success badge-sm">Spotify Playlist Created</span>
+        <span class="text-xs text-base-content/70"><%= track_count %> tracks</span>
+      </div>
+      <h4 class="font-bold text-base mt-1"><%= playlist["name"] %></h4>
+    </div>
+    <div>
+      <% if playlist.dig("external_urls", "spotify").present? %>
+        <%= link_to playlist.dig("external_urls", "spotify"), target: "_blank", rel: "noopener", class: "btn btn-success btn-xs gap-1" do %>
+          Open in Spotify ↗
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

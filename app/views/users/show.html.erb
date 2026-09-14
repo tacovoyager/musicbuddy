@@ -1,102 +1,110 @@
 <div class="min-h-screen bg-base-200 px-4 py-8">
-  <div class="mx-auto max-w-2xl space-y-6">
-    <!-- Identity header -->
-    <div class="card bg-base-100 shadow-xl">
-      <div class="card-body items-center text-center relative">
-        <%= button_to "Sign out", logout_path, method: :delete, class: "btn btn-ghost btn-sm absolute top-4 right-4" %>
-        <div class="avatar">
-          <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-            <img src="<%= @user.avatar_url %>" alt="<%= @user.name %>">
+  <div class="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-10 gap-6">
+    <!-- Left Column: User Profile & Connected Accounts (30% on lg) -->
+    <div class="space-y-6 lg:col-span-3">
+      <!-- Identity header -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body items-center text-center relative">
+          <%= button_to "Sign out", logout_path, method: :delete, class: "btn btn-ghost btn-sm absolute top-4 right-4" %>
+          <div class="avatar">
+            <div class="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+              <img src="<%= @user.avatar_url %>" alt="<%= @user.name %>">
+            </div>
           </div>
+          <h2 class="card-title mt-2 text-lg"><%= @user.name %></h2>
+          <p class="text-xs text-base-content/70"><%= @user.email %></p>
+          <div class="badge badge-outline badge-sm mt-1 gap-1"><%= @user.provider.split("_").first.capitalize %> account</div>
         </div>
-        <h2 class="card-title mt-4"><%= @user.name %></h2>
-        <p class="text-base-content/70"><%= @user.email %></p>
-        <div class="badge badge-outline gap-2"><%= @user.provider.split("_").first.capitalize %> account</div>
       </div>
-    </div>
 
-    <!-- Account metadata -->
-    <div class="stats shadow w-full bg-base-100">
-      <div class="stat">
-        <div class="stat-title">Member since</div>
-        <div class="stat-value text-primary text-xl"><%= humanized_datetime(@user.created_at) %></div>
+      <!-- Account metadata -->
+      <div class="stats stats-vertical sm:stats-horizontal lg:stats-vertical shadow w-full bg-base-100">
+        <div class="stat p-4">
+          <div class="stat-title text-xs">Member since</div>
+          <div class="stat-value text-primary text-base"><%= humanized_datetime(@user.created_at) %></div>
+        </div>
+        <div class="stat p-4">
+          <div class="stat-title text-xs">Last signed in</div>
+          <div class="stat-value text-secondary text-base"><%= humanized_datetime(@user.updated_at) %></div>
+        </div>
       </div>
-      <div class="stat">
-        <div class="stat-title">Last signed in</div>
-        <div class="stat-value text-secondary text-xl"><%= humanized_datetime(@user.updated_at) %></div>
-      </div>
-    </div>
 
-    <!-- Connected accounts -->
-    <div class="card bg-base-100 shadow-xl">
-      <div class="card-body">
-        <h3 class="card-title">Connected Accounts</h3>
-        <div class="divider mt-0 mb-2"></div>
+      <!-- Connected accounts -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body p-5">
+          <h3 class="card-title text-base">Connected Accounts</h3>
+          <div class="divider my-1"></div>
 
-        <% if (spotify = @user.spotify_account) %>
-          <div class="flex flex-wrap items-center gap-3">
-            <div class="badge badge-success gap-2">Spotify connected</div>
-            <% if spotify.expired? %>
-              <div class="badge badge-warning gap-2">Token expired</div>
-            <% else %>
-              <div class="badge badge-outline gap-2">Token active</div>
+          <% if (spotify = @user.spotify_account) %>
+            <div class="flex flex-wrap items-center gap-2">
+              <div class="badge badge-success badge-sm gap-1">Spotify connected</div>
+              <% if spotify.expired? %>
+                <div class="badge badge-warning badge-sm gap-1">Token expired</div>
+              <% else %>
+                <div class="badge badge-outline badge-sm gap-1">Token active</div>
+              <% end %>
+            </div>
+
+            <div class="text-xs text-base-content/70 mt-2 space-y-1">
+              <p>Spotify ID: <span class="font-mono"><%= spotify.uid %></span></p>
+              <p>Connected since <%= humanized_datetime(spotify.created_at) %></p>
+            </div>
+
+            <% if spotify.scope.present? %>
+              <div class="flex flex-wrap gap-1 mt-2">
+                <% spotify.scope.split.each do |scope| %>
+                  <div class="badge badge-ghost badge-xs"><%= scope %></div>
+                <% end %>
+              </div>
             <% end %>
-          </div>
 
-          <div class="text-sm text-base-content/70 mt-2 space-y-1">
-            <p>Spotify ID: <span class="font-mono"><%= spotify.uid %></span></p>
-            <p>Connected since <%= humanized_datetime(spotify.created_at) %></p>
-          </div>
+            <div class="card-actions mt-3">
+              <%= button_to "Disconnect Spotify", disconnect_spotify_path, method: :delete, class: "btn btn-outline btn-error btn-xs" %>
+              <%= button_to "Create Playlist", spotify_playlists_path, class: "btn btn-primary btn-xs" %>
+            </div>
 
-          <% if spotify.scope.present? %>
-            <div class="flex flex-wrap gap-2 mt-3">
-              <% spotify.scope.split.each do |scope| %>
-                <div class="badge badge-ghost badge-sm"><%= scope %></div>
+            <div id="created-playlists" class="space-y-2 mt-3"></div>
+          <% else %>
+            <p class="text-xs text-base-content/70">Connect your Spotify account to link it with Musicbuddy.</p>
+            <div class="card-actions mt-3">
+              <%= button_to "/auth/spotify", data: { turbo: false }, class: "btn btn-success btn-xs" do %>
+                Connect Spotify
               <% end %>
             </div>
           <% end %>
-
-          <div class="card-actions mt-4">
-            <%= button_to "Disconnect Spotify", disconnect_spotify_path, method: :delete, class: "btn btn-outline btn-error btn-sm" %>
-            <%= button_to "Create Playlist", spotify_playlists_path, class: "btn btn-primary btn-sm" %>
-          </div>
-
-          <div id="created-playlists" class="space-y-2 mt-4"></div>
-        <% else %>
-          <p class="text-base-content/70">Connect your Spotify account to link it with Musicbuddy.</p>
-          <div class="card-actions mt-4">
-            <%= button_to "/auth/spotify", data: { turbo: false }, class: "btn btn-success btn-sm" do %>
-              Connect Spotify
-            <% end %>
-          </div>
-        <% end %>
-      </div>
-    </div>
-
-    <% if @user.spotify_account %>
-      <!-- Musicbuddy playlists (deferred load via Turbo Frame + Solid Queue job broadcast) -->
-      <%= turbo_stream_from "spotify_musicbuddy_playlists_#{@user.id}" %>
-      <div class="card bg-base-100 shadow-xl">
-        <div class="card-body">
-          <div class="flex items-center justify-between">
-            <h3 class="card-title">Your Musicbuddy Playlists</h3>
-            <% unless @user.spotify_account.expired? %>
-              <%= link_to "Refresh", spotify_playlists_path, data: { turbo_frame: "musicbuddy_playlists" }, class: "btn btn-ghost btn-xs" %>
-            <% end %>
-          </div>
-          <div class="divider mt-0 mb-2"></div>
-          <% if @user.spotify_account.expired? %>
-            <%= render "spotify_playlists/expired" %>
-          <% else %>
-            <%= turbo_frame_tag "musicbuddy_playlists", src: spotify_playlists_path do %>
-              <div class="flex items-center gap-3 text-base-content/70">
-                <span class="loading loading-spinner loading-sm"></span>
-                <span>Looking for your Musicbuddy playlists on Spotify...</span>
-              </div>
-            <% end %>
-          <% end %>
         </div>
       </div>
-    <% end %>
+
+      <% if @user.spotify_account %>
+        <!-- Musicbuddy playlists (deferred load via Turbo Frame + Solid Queue job broadcast) -->
+        <%= turbo_stream_from "spotify_musicbuddy_playlists_#{@user.id}" %>
+        <div class="card bg-base-100 shadow-xl">
+          <div class="card-body p-5">
+            <div class="flex items-center justify-between">
+              <h3 class="card-title text-base">Your Musicbuddy Playlists</h3>
+              <% unless @user.spotify_account.expired? %>
+                <%= link_to "Refresh", spotify_playlists_path, data: { turbo_frame: "musicbuddy_playlists" }, class: "btn btn-ghost btn-xs" %>
+              <% end %>
+            </div>
+            <div class="divider my-1"></div>
+            <% if @user.spotify_account.expired? %>
+              <%= render "spotify_playlists/expired" %>
+            <% else %>
+              <%= turbo_frame_tag "musicbuddy_playlists", src: spotify_playlists_path do %>
+                <div class="flex items-center gap-2 text-xs text-base-content/70">
+                  <span class="loading loading-spinner loading-xs"></span>
+                  <span>Looking for your Musicbuddy playlists...</span>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Right Column: AI Streaming Chat Interface (70% on lg) -->
+    <div class="lg:col-span-7">
+      <%= render "ai_chats/chat", user: @user %>
+    </div>
   </div>
 </div>
