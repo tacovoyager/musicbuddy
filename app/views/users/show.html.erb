@@ -61,6 +61,11 @@
             <div class="card-actions mt-3">
               <%= button_to "Disconnect Spotify", disconnect_spotify_path, method: :delete, class: "btn btn-outline btn-error btn-xs" %>
               <%= button_to "Create Playlist", spotify_playlists_path, class: "btn btn-primary btn-xs" %>
+              <% if spotify.expired? %>
+                <%= button_to "/auth/spotify", data: { turbo: false }, class: "btn btn-warning btn-xs" do %>
+                  Refresh token
+                <% end %>
+              <% end %>
             </div>
 
             <div id="created-playlists" class="space-y-2 mt-3"></div>

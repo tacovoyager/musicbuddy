@@ -20,4 +20,20 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h2", user.name
   end
+
+  test "shows a token refresh button for an expired Spotify account" do
+    user = users(:one)
+    user.create_spotify_account!(uid: "spotify-uid-1", access_token: "token", expires_at: 1.hour.ago)
+    OmniAuth.config.mock_auth[:google_oauth2] = OmniAuth::AuthHash.new({
+      provider: user.provider,
+      uid: user.uid,
+      info: { email: user.email, name: user.name, image: user.avatar_url }
+    })
+    get "/auth/google_oauth2/callback"
+
+    get profile_path
+
+    assert_response :success
+    assert_select "form[action='/auth/spotify'] button", "Refresh token"
+  end
 end
