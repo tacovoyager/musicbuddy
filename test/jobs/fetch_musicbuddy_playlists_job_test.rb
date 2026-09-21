@@ -31,14 +31,14 @@ class FetchMusicbuddyPlaylistsJobTest < ActiveJob::TestCase
     end
   end
 
-  test "broadcasts the expired-reconnect state when the Spotify API call fails with 401" do
+  test "broadcasts the expired refresh-token state when the Spotify API call fails with 401" do
     stub_spotify_account_method(:musicbuddy_playlists, ->(*) { raise SpotifyAccount::ApiError.new("Spotify API error (401)", status: 401) }) do
       streams = capture_turbo_stream_broadcasts("spotify_musicbuddy_playlists_#{@user.id}") do
         FetchMusicbuddyPlaylistsJob.perform_now(@user.id)
       end
 
       assert_equal 1, streams.size
-      assert_match "Reconnect Spotify", streams.first.to_s
+      assert_match "Refresh your token", streams.first.to_s
     end
   end
 

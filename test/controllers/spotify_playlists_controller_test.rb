@@ -22,7 +22,7 @@ class SpotifyPlaylistsControllerTest < ActionDispatch::IntegrationTest
     assert_match "musicbuddy_playlists", response.body
   end
 
-  test "index skips enqueueing the job and renders the reconnect prompt when the token is expired" do
+  test "index skips enqueueing the job and renders the refresh-token prompt when the token is expired" do
     @user.spotify_account.update!(expires_at: 1.hour.ago)
 
     assert_no_enqueued_jobs do
@@ -30,7 +30,7 @@ class SpotifyPlaylistsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :success
-    assert_match "Reconnect Spotify", response.body
+    assert_match "Refresh your token", response.body
   end
 
   test "create appends a playlist via turbo stream" do
