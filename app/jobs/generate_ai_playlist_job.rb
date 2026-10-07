@@ -24,7 +24,7 @@ class GenerateAiPlaylistJob < ApplicationJob
     stream = client.messages.stream(
       model: model_name,
       system: AiSystemPrompt::SYSTEM_INSTRUCTIONS,
-      messages: AiSystemPrompt.build_messages(user, session_id: session_id),
+      messages: AiSystemPrompt.build_messages(user, session_id: session_id, exclude: assistant_message),
       max_tokens: 2048
     )
 
